@@ -1,0 +1,14 @@
+[
+    { "caption": "-" },
+    {
+        "id": "repository",
+        "children":
+        [
+            {
+                "caption": "Open config file...",
+                "command": "open_in_editor",
+                "args": { "path": "$working_dir/.git/config" }
+            }
+        ]
+    }
+]

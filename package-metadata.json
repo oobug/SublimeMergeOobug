@@ -1,0 +1,8 @@
+{
+    "sublime_merge": "*",
+    "description": "Curtis den Otter's settings and extensions",
+    "version": "2019.07.25.15.30.00",
+    "platforms": ["*"],
+    "url": "https://github.com/oobug/SublimeMergeOobug",
+    "dependencies": []
+}

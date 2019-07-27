@@ -1,0 +1,15 @@
+[
+    { "caption": "-" },
+    {
+        "caption": "Difftool - diff against parent",
+        "id": "difftool-parent",
+        "children":
+        [
+            {
+                "caption": "diff-doc",
+                "command": "git",
+                "args": {"argv": ["difftool", "--no-prompt", "-t", "diff-doc", "$short_commit^!", "$path"]}
+            }
+        ]
+    }
+]

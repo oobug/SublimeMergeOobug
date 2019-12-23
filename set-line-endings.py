@@ -24,7 +24,7 @@ with open(file_path, 'rb') as open_file:
     content = open_file.read()
 
 if sys.argv[2] == 'windows':
-    content = WINDOWS_NEWLINE.join(content.splitlines())
+    content = content.replace(UNIX_NEWLINE, WINDOWS_NEWLINE)
 else:
     content = content.replace(
         WINDOWS_NEWLINE, UNIX_NEWLINE

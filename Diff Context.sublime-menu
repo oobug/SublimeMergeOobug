@@ -1,0 +1,20 @@
+[
+    { "caption": "-" },
+    {
+        "caption": "Line Endings",
+        "id": "line-endings",
+        "children":
+        [
+            {
+                "caption": "Set to Unix",
+                "command": "git",
+                "args": {"argv": ["set-line-endings", "$path", "unix"]}
+            },
+            {
+                "caption": "Set to Windows",
+                "command": "git",
+                "args": {"argv": ["set-line-endings", "$path", "windows"]}
+            }
+        ]
+    }
+]

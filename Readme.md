@@ -76,5 +76,5 @@ From https://forum.sublimetext.com/t/github-gitlab-bitbucket-integration-command
                 ;;
         esac
         
-        explorer "$repo_url"
+        py "${APPDATA}/Sublime Merge/Packages/SublimeMergeOobug/open_url.py" "$repo_url";
     }; f'

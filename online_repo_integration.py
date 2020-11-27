@@ -2,7 +2,17 @@ r"""GitHub/GitLab/Bitbucket integration
 
 To use, run the following:
 git config --global alias.open '!f() {
-    py \"${APPDATA}/Sublime Merge/Packages/SublimeMergeOobug/online-repo-integration.py\" "${1:-branch}" "${2:-HEAD}"
+    local action="${1:-branch}"
+    local target="${2:-HEAD}"
+    local output="$(py "${APPDATA}/Sublime Merge/Packages/SublimeMergeOobug/online_repo_integration.py" "$action" "$target")"
+
+    if [ "$output" != "${output#"1: "}" ]; then
+        echo "${output#"1: "}"
+        return 1
+    elif [ "$output" != "${output#"2: "}" ]; then
+        echo "${output#"2: "}"
+        return 2
+    fi
 }; f'
 
 Inspired by:
@@ -23,10 +33,11 @@ def ShellCommand(command):
 
 def OpenOnlineRepository(action="branch", target="HEAD"):
     """Open the online repository URL for the action and target"""
-    initialTarget = target
     remote = "origin"
 
     if action in ("branch", "pr"):
+        initialTarget = target
+
         # Get full name (i.e. refs/heads/*; refs/remotes/*/*);
         # src: https://stackoverflow.com/a/9753364
         target = ShellCommand('git rev-parse --symbolic-full-name "{}"'.format(target))

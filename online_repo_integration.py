@@ -63,7 +63,7 @@ def OpenOnlineRepository(action="branch", target="HEAD"):
     repoUrl = ShellCommand('git remote get-url "{}"'.format(remote)) or ""
     repoUrl = re.sub(r"(\.(com|org|io))\:", r"\1/", repoUrl)
     repoUrl = re.sub(r"git@", r"https://", repoUrl)
-    repoUrl = re.sub(r"\.git", r"", repoUrl)
+    repoUrl = re.sub(r"\.git$", r"", repoUrl)
 
     if not repoUrl:
         return "1: Cannot open: no remote repository configured under ({})".format(

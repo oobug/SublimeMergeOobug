@@ -17,7 +17,7 @@ From https://github.com/TortoiseGit/TortoiseGit/tree/master/contrib/diff-scripts
 
 ### GitHub/GitLab/Bitbucket Integration
 
-Inspired by https://forum.sublimetext.com/t/github-gitlab-bitbucket-integration-commands-menu-items/53893
+From https://forum.sublimetext.com/t/github-gitlab-bitbucket-integration-commands-menu-items/53893
 
     git config --global alias.open '!f() {
         local type="${1:-branch}"

@@ -22,6 +22,7 @@ def ShellCommand(command):
 
 
 def OpenOnlineRepository(action="branch", target="HEAD"):
+    """Open the online repository URL for the action and target"""
     initialTarget = target
     remote = "origin"
 

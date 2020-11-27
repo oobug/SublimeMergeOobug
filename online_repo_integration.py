@@ -19,10 +19,10 @@ Inspired by:
 https://forum.sublimetext.com/t/github-gitlab-bitbucket-integration-commands-menu-items/53893
 """
 
+import os
 import re
 import subprocess
 import sys
-import webbrowser
 
 
 def ShellCommand(command):
@@ -107,7 +107,7 @@ def OpenOnlineRepository(action="branch", target="HEAD"):
     else:
         return "1: Cannot open: not a GitHub, GitLab, or Bitbucket repository"
 
-    webbrowser.open_new_tab(repoUrl)
+    os.system('explorer "{}"'.format(repoUrl))
 
 
 if __name__ == "__main__":

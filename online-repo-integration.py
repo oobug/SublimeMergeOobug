@@ -21,76 +21,84 @@ def ShellCommand(command):
     return value.decode("utf-8").strip()
 
 
-action = sys.argv[1]
-target = initialTarget = sys.argv[2]
-remote = "origin"
+def OpenOnlineRepository(action="branch", target="HEAD"):
+    initialTarget = target
+    remote = "origin"
 
-if action in ("branch", "pr"):
-    # Get full name (i.e. refs/heads/*; refs/remotes/*/*);
-    # src: https://stackoverflow.com/a/9753364
-    target = ShellCommand('git rev-parse --symbolic-full-name "{}"'.format(target))
-
-    if target.startswith("refs/remotes"):
-        # Extract from remote branch reference
-        target = target[12:]
-    else:
-        # Extract from local branch reference
+    if action in ("branch", "pr"):
+        # Get full name (i.e. refs/heads/*; refs/remotes/*/*);
         # src: https://stackoverflow.com/a/9753364
-        target = ShellCommand(
-            'git for-each-ref --format="%(upstream:short)" "{}"'.format(target)
+        target = ShellCommand('git rev-parse --symbolic-full-name "{}"'.format(target))
+
+        if target.startswith("refs/remotes/"):
+            # Extract from remote branch reference
+            target = target[13:]
+        else:
+            # Extract from local branch reference
+            # src: https://stackoverflow.com/a/9753364
+            target = ShellCommand(
+                'git for-each-ref --format="%(upstream:short)" "{}"'.format(target)
+            )
+
+        # split remote/branch
+        try:
+            remote, target = target.split("/", maxsplit=1)
+        except ValueError:
+            return "2: Branch ({}) does not point to a remote repository.".format(
+                initialTarget
+            )
+
+    repoUrl = ShellCommand('git remote get-url "{}"'.format(remote)) or ""
+    repoUrl = re.sub(r"(\.(com|org|io))\:", r"\1/", repoUrl)
+    repoUrl = re.sub(r"git@", r"https://", repoUrl)
+    repoUrl = re.sub(r"\.git", r"", repoUrl)
+
+    if not repoUrl:
+        return "1: Cannot open: no remote repository configured under ({})".format(
+            remote
         )
 
-    # split remote/branch
-    try:
-        remote, target = target.split("/", maxsplit=1)
-    except ValueError:
-        print(
-            "Branch ({}) does not point to a remote repository.".format(initialTarget)
-        )
+    lowerRepoUrl = repoUrl.lower()
 
-repoUrl = ShellCommand('git remote get-url "{}"'.format(remote)) or ""
-repoUrl = re.sub(r"(\.(com|org|io))\:", r"\1/", repoUrl)
-repoUrl = re.sub(r"git@", r"https://", repoUrl)
-repoUrl = re.sub(r"\.git", r"", repoUrl)
-
-if not repoUrl:
-    print("Cannot open: no remote repository configured under ({})".format(remote))
-
-lowerRepoUrl = repoUrl.lower()
-
-if action == "commit":
-    commitTarget = ShellCommand('git rev-parse "{}"'.format(target))
-
-if "github" in lowerRepoUrl:
     if action == "commit":
-        repoUrl += "/commit/{}".format(commitTarget)
-    elif action == "pr":
-        repoUrl += "/compare/{}?expand=1".format(target)
-    elif action == "tag":
-        repoUrl += "/releases/tag/{}".format(target)
-    elif action == "branch":
-        repoUrl += "/tree/{}".format(target)
-elif "bitbucket" in lowerRepoUrl:
-    if action == "commit":
-        repoUrl += "/commits/{}".format(commitTarget)
-    elif action == "pr":
-        repoUrl += "/pull-requests/new?source={}".format(target)
-    elif action == "tag":
-        repoUrl += "/src/{}".format(target)
-    elif action == "branch":
-        repoUrl += "/src/{}".format(target)
-elif "gitlab" in lowerRepoUrl:
-    if action == "commit":
-        repoUrl += "/-/commit/{}".format(commitTarget)
-    elif action == "pr":
-        repoUrl += "/-/merge_requests/new?merge_request[source_branch]={}".format(
-            target
-        )
-    elif action == "tag":
-        repoUrl += "/-/tags/{}".format(target)
-    elif action == "branch":
-        repoUrl += "/-/tree/{}".format(target)
-else:
-    print("Cannot open: not a GitHub, GitLab, or Bitbucket repository")
+        commitTarget = ShellCommand('git rev-parse "{}"'.format(target))
 
-webbrowser.open_new_tab(repoUrl)
+    if "github" in lowerRepoUrl:
+        if action == "commit":
+            repoUrl += "/commit/{}".format(commitTarget)
+        elif action == "pr":
+            repoUrl += "/compare/{}?expand=1".format(target)
+        elif action == "tag":
+            repoUrl += "/releases/tag/{}".format(target)
+        elif action == "branch":
+            repoUrl += "/tree/{}".format(target)
+    elif "bitbucket" in lowerRepoUrl:
+        if action == "commit":
+            repoUrl += "/commits/{}".format(commitTarget)
+        elif action == "pr":
+            repoUrl += "/pull-requests/new?source={}".format(target)
+        elif action == "tag":
+            repoUrl += "/src/{}".format(target)
+        elif action == "branch":
+            repoUrl += "/src/{}".format(target)
+    elif "gitlab" in lowerRepoUrl:
+        if action == "commit":
+            repoUrl += "/-/commit/{}".format(commitTarget)
+        elif action == "pr":
+            repoUrl += "/-/merge_requests/new?merge_request[source_branch]={}".format(
+                target
+            )
+        elif action == "tag":
+            repoUrl += "/-/tags/{}".format(target)
+        elif action == "branch":
+            repoUrl += "/-/tree/{}".format(target)
+    else:
+        return "1: Cannot open: not a GitHub, GitLab, or Bitbucket repository"
+
+    webbrowser.open_new_tab(repoUrl)
+
+
+if __name__ == "__main__":
+    action = sys.argv[1]
+    target = sys.argv[2]
+    print(OpenOnlineRepository(action, target))

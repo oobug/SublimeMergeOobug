@@ -47,7 +47,7 @@ From https://forum.sublimetext.com/t/github-gitlab-bitbucket-integration-command
         
         local repo_url="$(git remote get-url "$remote" | sed -E -e "s/(\.(com|org|io))\:/\1\//" -e "s/git@/https:\/\//" -e "s/\.git$//")"
         if [ -z "$repo_url" ]; then
-            echo "Cannot open: no remote repository configured under (origin)" >&2
+            echo "Cannot open: no remote repository configured under ($remote)" >&2
             return 1
         fi
         

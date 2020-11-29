@@ -17,7 +17,7 @@ From https://github.com/TortoiseGit/TortoiseGit/tree/master/contrib/diff-scripts
 
 ### GitHub/GitLab/Bitbucket/Azure DevOps Integration
 
-From https://forum.sublimetext.com/t/github-gitlab-bitbucket-integration-commands-menu-items/53893
+Originally from https://forum.sublimetext.com/t/github-gitlab-bitbucket-integration-commands-menu-items/53893
 
     git config --global alias.open '!f() {
         local type="${1:-branch}"

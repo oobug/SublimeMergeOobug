@@ -15,7 +15,7 @@ From https://github.com/TortoiseGit/TortoiseGit/tree/master/contrib/diff-scripts
     [difftool "diff-doc"]
         cmd="wscript.exe \"c:\\Toolbox\\Git\\diff-scripts\\diff-doc.js\" \"$LOCAL\" \"$REMOTE\""
 
-### GitHub/GitLab/Bitbucket Integration
+### GitHub/GitLab/Bitbucket/Azure DevOps Integration
 
 From https://forum.sublimetext.com/t/github-gitlab-bitbucket-integration-commands-menu-items/53893
 
@@ -45,13 +45,29 @@ From https://forum.sublimetext.com/t/github-gitlab-bitbucket-integration-command
             fi
         fi
         
-        local repo_url="$(git remote get-url "$remote" | sed -E -e "s/(\.(com|org|io))\:/\1\//" -e "s/git@/https:\/\//" -e "s/\.git$//")"
+        local repo_url="$(git remote get-url "origin" | sed -E -e "s/git@(ssh\.)?/https:\/\//" -e "s/(https:\/\/)[^\/]+@/\1/" -e "s/(\.(com|org|io|ca))\:v[0-9]/\1/" -e "s/(\.(com|org|io|ca))\:/\1\//" -e "s/\.git$//")"
+        
         if [ -z "$repo_url" ]; then
             echo "Cannot open: no remote repository configured under ($remote)" >&2
             return 1
         fi
         
-        case "$(tr "[:upper:]" "[:lower:]" <<< "$repo_url")" in
+        local lower_url="$(tr "[:upper:]" "[:lower:]" <<< "$repo_url")"
+        
+        if [[ "$lower_url" == *"azure"* || "$lower_url" == *"tfs"* ]]
+        then
+            if [[ "$lower_url" != *"_git"* ]]
+            then
+                repo_url="$(echo "$repo_url" | sed -E -e "s/(\/[^\/]+)$/\/_git\1/")"
+            fi
+            
+            [ "$type" = "commit" ] && repo_url="$repo_url/commit/$(git rev-parse "$target")"
+            [ "$type" = "pr"     ] && repo_url="$repo_url/pullrequestcreate?sourceRef=$target"
+            [ "$type" = "tag"    ] && repo_url="$repo_url?version=GT$target"
+            [ "$type" = "branch" ] && repo_url="$repo_url?version=GB$target"
+        fi
+        
+        case "$lower_url" in
             *github*)
                 [ "$type" = "commit" ] && repo_url="$repo_url/commit/$(git rev-parse "$target")"
                 [ "$type" = "pr"     ] && repo_url="$repo_url/compare/$target?expand=1"
@@ -70,8 +86,12 @@ From https://forum.sublimetext.com/t/github-gitlab-bitbucket-integration-command
                 [ "$type" = "tag"    ] && repo_url="$repo_url/-/tags/$target"
                 [ "$type" = "branch" ] && repo_url="$repo_url/-/tree/$target"
                 ;;
+            *azure*)
+                ;;
+            *tfs*)
+                ;;
             *)
-                echo "Cannot open: not a GitHub, GitLab, or Bitbucket repository" >&2
+                echo "Cannot open: not a GitHub, GitLab, Bitbucket, or Azure DevOps repository" >&2
                 return 1
                 ;;
         esac

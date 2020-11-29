@@ -1,12 +1,12 @@
 [
     { "caption": "-", "id": "end" },
     {
-        "caption": "Open Branch $branch in GitHub/GitLab/Bitbucket",
+        "caption": "Open Branch $branch in GitHub/GitLab/Bitbucket/Azure DevOps",
         "command": "git",
         "args": { "argv": ["open", "branch", "$branch"] }
     },
     {
-        "caption": "Create Pull Request on $branch in GitHub/GitLab/Bitbucket",
+        "caption": "Create Pull Request on $branch in GitHub/GitLab/Bitbucket/Azure DevOps",
         "command": "git",
         "args": { "argv": ["open", "pr", "$branch"] }
     }

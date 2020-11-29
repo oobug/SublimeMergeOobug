@@ -5,6 +5,11 @@
         "children":
         [
             {
+                "caption": "Open in GitHub/GitLab/Bitbucket/Azure DevOps...",
+                "command": "git",
+                "args": { "argv": ["open", "repo"] }
+            },
+            {
                 "caption": "Open config file...",
                 "command": "open_in_editor",
                 "args": { "path": "$working_dir/.git/config" }

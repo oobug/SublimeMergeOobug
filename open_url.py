@@ -21,7 +21,9 @@ urlRegex = re.compile(
     # ...or ip
     r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})"
     # optional port
-    r"(?::\d+)?" r"(?:/?|[/?]\S+)$",  # end of URL
+    r"(?::\d+)?"
+    # end of URL
+    r"(?:/?|[/?]\S+)$",
     re.IGNORECASE,
 )
 

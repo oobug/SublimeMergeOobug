@@ -23,7 +23,7 @@ urlRegex = re.compile(
     # optional port
     r"(?::\d+)?"
     # end of URL
-    r"(?:/?|[/?]\S+)$",
+    r"(?:/?|[/?][^\"\s]+)$",
     re.IGNORECASE,
 )
 

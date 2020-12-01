@@ -8,9 +8,6 @@ import os
 import re
 import sys
 
-url = sys.argv[1]
-
-# Validate URL
 urlRegex = re.compile(
     # http:// or https://
     r"^https?://"
@@ -21,9 +18,27 @@ urlRegex = re.compile(
     # ...or ip
     r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})"
     # optional port
-    r"(?::\d+)?" r"(?:/?|[/?]\S+)$",  # end of URL
+    r"(?::\d+)?"
+    # end of URL
+    r"(?:/?|[/?][^\"\s]+)$",
     re.IGNORECASE,
 )
 
-if urlRegex.match(url):
-    os.system('explorer "{}"'.format(url))
+
+def OpenUrl(url):
+    """Validate and (if successfully validated) open a URL
+
+    Opens the URL in the user's default browser.
+    """
+    if urlRegex.match(url):
+        if sys.platform.startswith("win"):
+            utility = "explorer"
+        else:
+            utility = "open"
+
+        os.system('{} "{}"'.format(utility, url))
+
+
+if __name__ == "__main__":
+    url = sys.argv[1]
+    OpenUrl(url)

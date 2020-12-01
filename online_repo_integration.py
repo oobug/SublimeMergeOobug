@@ -24,15 +24,17 @@ import re
 import subprocess
 import sys
 
+try:
+    from git import Repo
+except ImportError:
+    subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'gitpython'])
 
-def ShellCommand(command):
-    """Execute a shell command and return the output"""
-    value = subprocess.check_output(command)
-    return value.decode("utf-8").strip()
+    from git import Repo
 
 
 def OpenOnlineRepository(action="branch", target="HEAD"):
     """Open the online repository URL for the action and target"""
+    git = Repo(os.getcwd()).git
     remote = "origin"
 
     if action in ("branch", "pr"):
@@ -40,7 +42,7 @@ def OpenOnlineRepository(action="branch", target="HEAD"):
 
         # Get full name (i.e. refs/heads/*; refs/remotes/*/*);
         # src: https://stackoverflow.com/a/9753364
-        target = ShellCommand('git rev-parse --symbolic-full-name "{}"'.format(target))
+        target = git.rev_parse(target, symbolic_full_name=True)
 
         if target.startswith("refs/remotes/"):
             # Extract from remote branch reference
@@ -48,9 +50,7 @@ def OpenOnlineRepository(action="branch", target="HEAD"):
         else:
             # Extract from local branch reference
             # src: https://stackoverflow.com/a/9753364
-            target = ShellCommand(
-                'git for-each-ref --format="%(upstream:short)" "{}"'.format(target)
-            )
+            target = git.for_each_ref(target, format="%(upstream:short)")
 
         # split remote/branch
         try:
@@ -60,9 +60,11 @@ def OpenOnlineRepository(action="branch", target="HEAD"):
                 initialTarget
             )
 
-    repoUrl = ShellCommand('git remote get-url "{}"'.format(remote)) or ""
-    repoUrl = re.sub(r"(\.(com|org|io))\:", r"\1/", repoUrl)
-    repoUrl = re.sub(r"git@", r"https://", repoUrl)
+    repoUrl = git.remote("get-url", remote) or ""
+    repoUrl = re.sub(r"git@(ssh\.)?", r"https://", repoUrl)
+    repoUrl = re.sub(r"(https://)[^/]+@", r"\1", repoUrl)
+    repoUrl = re.sub(r"(\.(com|org|io|ca))\:v\d", r"\1", repoUrl)
+    repoUrl = re.sub(r"(\.(com|org|io|ca))\:", r"\1/", repoUrl)
     repoUrl = re.sub(r"\.git$", r"", repoUrl)
 
     if not repoUrl:
@@ -73,7 +75,7 @@ def OpenOnlineRepository(action="branch", target="HEAD"):
     lowerRepoUrl = repoUrl.lower()
 
     if action == "commit":
-        commitTarget = ShellCommand('git rev-parse "{}"'.format(target))
+        commitTarget = git.rev_parse(target)
 
     if "github" in lowerRepoUrl:
         if action == "commit":
@@ -104,6 +106,18 @@ def OpenOnlineRepository(action="branch", target="HEAD"):
             repoUrl += "/-/tags/{}".format(target)
         elif action == "branch":
             repoUrl += "/-/tree/{}".format(target)
+    elif "azure" in lowerRepoUrl or "tfs" in lowerRepoUrl:
+        if "_git" not in lowerRepoUrl:
+            repoUrl = re.sub(r"(/[^/]+)$", r"/_git\1", repoUrl)
+
+        if action == "commit":
+            repoUrl += "/commit/{}".format(commitTarget)
+        elif action == "pr":
+            repoUrl += "/pullrequestcreate?sourceRef={}".format(target)
+        elif action == "tag":
+            repoUrl += "?version=GT{}".format(target)
+        elif action == "branch":
+            repoUrl += "?version=GB{}".format(target)
     else:
         return "1: Cannot open: not a GitHub, GitLab, or Bitbucket repository"
 

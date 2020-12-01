@@ -27,9 +27,13 @@ import sys
 try:
     from git import Repo
 except ImportError:
-    subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'gitpython'])
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "gitpython"])
 
     from git import Repo
+
+# Import local OpenUrl function
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+from open_url import OpenUrl
 
 
 def OpenOnlineRepository(action="branch", target="HEAD"):
@@ -121,7 +125,7 @@ def OpenOnlineRepository(action="branch", target="HEAD"):
     else:
         return "1: Cannot open: not a GitHub, GitLab, or Bitbucket repository"
 
-    os.system('explorer "{}"'.format(repoUrl))
+    OpenUrl(repoUrl)
 
 
 if __name__ == "__main__":

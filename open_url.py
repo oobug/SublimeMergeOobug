@@ -31,7 +31,12 @@ def OpenUrl(url):
     Opens the URL in the user's default browser.
     """
     if urlRegex.match(url):
-        os.system('explorer "{}"'.format(url))
+        if sys.platform.startswith("win"):
+            utility = "explorer"
+        else:
+            utility = "open"
+
+        os.system('{} "{}"'.format(utility, url))
 
 
 if __name__ == "__main__":

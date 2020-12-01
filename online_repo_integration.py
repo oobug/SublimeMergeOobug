@@ -21,14 +21,13 @@ https://forum.sublimetext.com/t/github-gitlab-bitbucket-integration-commands-men
 
 import os
 import re
-import subprocess
 import sys
 
 try:
     from git import Repo
 except ImportError:
+    import subprocess
     subprocess.check_call([sys.executable, "-m", "pip", "install", "gitpython"])
-
     from git import Repo
 
 # Import local OpenUrl function

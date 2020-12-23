@@ -122,7 +122,10 @@ def OpenOnlineRepository(action="branch", target="HEAD"):
         elif action == "branch":
             repoUrl += "?version=GB{}".format(target)
     else:
-        return "1: Cannot open: not a GitHub, GitLab, or Bitbucket repository"
+        return (
+            "1: Cannot open: not a GitHub, GitLab, Bitbucket, or Azure DevOps "
+            "repository"
+        )
 
     OpenUrl(repoUrl)
 

@@ -29,7 +29,7 @@ A menu item has been added to the File menu to allow diffing a Word document wit
     [difftool "diff-doc"]
         cmd="wscript.exe \"c:\\Toolbox\\Git\\diff-scripts\\diff-doc.js\" \"$LOCAL\" \"$REMOTE\""
 
-### GitHub/GitLab/Bitbucket Integration
+### GitHub/GitLab/Bitbucket/Azure DevOps Integration
 
 Inspired by https://forum.sublimetext.com/t/github-gitlab-bitbucket-integration-commands-menu-items/53893
 

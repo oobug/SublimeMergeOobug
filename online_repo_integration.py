@@ -55,7 +55,7 @@ def OpenOnlineRepository(action="branch", target="HEAD"):
             # src: https://stackoverflow.com/a/9753364
             target = git.for_each_ref(target, format="%(upstream:short)")
 
-        # split remote/branch
+        # Split remote/branch
         try:
             remote, target = target.split("/", maxsplit=1)
         except ValueError:

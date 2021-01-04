@@ -1,4 +1,4 @@
-r"""GitHub/GitLab/Bitbucket integration
+r"""GitHub/GitLab/Bitbucket/Azure DevOps integration
 
 To use, run the following:
 git config --global alias.open '!f() {
@@ -97,7 +97,13 @@ def OpenOnlineRepository(action="branch", target="HEAD"):
         elif action == "tag":
             repoUrl += "/src/{}".format(target)
         elif action == "branch":
-            repoUrl += "/src/{}".format(target)
+            if "/" in target:
+                # Get latest commit hash on branch. The git command returns a
+                # hash surrounded by quote marks.
+                commit = git.log("-n", "1", '--pretty=format:"%H"', target).strip('"')
+                repoUrl += "/src/{}/?at={}".format(commit, target)
+            else:
+                repoUrl += "/src/{}".format(target)
     elif "gitlab" in lowerRepoUrl:
         if action == "commit":
             repoUrl += "/-/commit/{}".format(commitTarget)

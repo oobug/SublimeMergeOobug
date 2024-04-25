@@ -1,9 +1,9 @@
 [
-    { "caption": "-" },
     {
         "id": "repository",
         "children":
         [
+            { "caption": "-" },
             {
                 "caption": "Open in GitHub/GitLab/Bitbucket/Azure DevOps...",
                 "command": "git",

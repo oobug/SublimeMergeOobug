@@ -22,5 +22,28 @@
         "caption": "Open Tag in GitHub/GitLab/Bitbucket/Azure DevOps…",
         "command": "git",
         "args": { "argv": ["open", "tag", "$select_tag"] }
+    },
+    {
+        "caption": "Interactive rebase…",
+        "command": "git",
+        "args": {
+            "argv": [
+                "rebase",
+                "-i",
+                "$select_branch"
+            ]
+        }
+    },
+    {
+        "caption": "Interactive rebase onto…",
+        "command": "git",
+        "args": {
+            "argv": [
+                "rebase",
+                "-i",
+                "--onto",
+                "$select_commit"
+            ]
+        }
     }
 ]
